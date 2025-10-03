@@ -19,5 +19,5 @@ The project demonstrates the effectiveness of transformer-based vision models fo
 
 📈 Results Accuracy: ~83% on DermNet dataset (challenging subset without labels). Demonstrates strong generalization despite dataset difficulty. Highlights the potential of Swin Transformer for medical image classification tasks. 
 
-🔮 Future Work Fine-tune on larger dermatology datasets with clear labels. Deploy as a web app for real-time classification. add this readme.md Explore ensemble methods for further performance gains.
+🔮 Future Work Fine-tune on larger dermatology datasets with clear labels. Deploy as a web app for real-time classification.Explore ensemble methods for further performance gains.
 ---
