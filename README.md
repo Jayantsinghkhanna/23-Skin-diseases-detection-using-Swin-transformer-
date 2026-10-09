@@ -1,23 +1,224 @@
-# 🧑‍⚕️ Skin Disease Detection using Swin Transformer
+<div align="center">
 
-This repository contains a deep learning pipeline for **skin disease detection** using the **Swin Transformer**, a state-of-the-art Vision Transformer architecture.  
-The project demonstrates the effectiveness of transformer-based vision models for medical image analysis, achieving **83% accuracy** on a challenging subset of the **DermNet Skin Dataset**.
+# 🩺 SkinScan Doctor
+### Skin Disease Classification with Swin Transformer
+
+**A deep-learning computer vision project for classifying dermatological images into 23 skin-disease categories.**
+
+[![Python](https://img.shields.io/badge/Python-Deep%20Learning-3776AB?logo=python&logoColor=white)](https://www.python.org/)
+[![PyTorch](https://img.shields.io/badge/PyTorch-Model%20Training-EE4C2C?logo=pytorch&logoColor=white)](https://pytorch.org/)
+[![timm](https://img.shields.io/badge/Model-timm-6C5CE7)](https://huggingface.co/docs/timm/index)
+[![Task](https://img.shields.io/badge/Task-23--Class%20Classification-0A9396)](#-project-overview)
+[![Dataset](https://img.shields.io/badge/Dataset-DermNet-457B9D)](#-dataset)
+
+</div>
 
 ---
 
-## 🚀 Project Overview
-- **Goal:** Automatically classify skin diseases from dermatological images.  
-- **Dataset:** DermNet Skin Dataset (unlabeled and imbalanced, requiring preprocessing).  
-- **Model:** Swin Transformer (Tiny/Small variants from timm).  
-- **Framework:** PyTorch.  
+## 🧠 Project overview
 
-**Key Features:**
-- Image preprocessing (resizing, normalization, augmentation).  
-- End-to-end model training and evaluation.  
-- Robust performance on a difficult real-world dataset.  
-- Achieved **83% accuracy** on the test set.  
+**SkinScan Doctor** explores the use of a pretrained **Swin Transformer** for multi-class classification of dermatological images. The project uses PyTorch and `timm` to train a Swin-Tiny model on a 23-class DermNet dataset, with preprocessing, data augmentation, validation, and test-set evaluation.
 
-📈 Results Accuracy: ~83% on DermNet dataset (challenging subset without labels). Demonstrates strong generalization despite dataset difficulty. Highlights the potential of Swin Transformer for medical image classification tasks. 
+The goal is to build a computer-vision pipeline that can recognise visual patterns associated with different skin-condition categories and serve as a foundation for an accessible inference experience.
 
-🔮 Future Work Fine-tune on larger dermatology datasets with clear labels. Deploy as a web app for real-time classification.Explore ensemble methods for further performance gains.
+> **Medical-use disclaimer:** This is an educational machine-learning project, not a medical device. Model predictions are not a diagnosis and must not replace assessment by a qualified healthcare professional. Performance can vary across image quality, populations, devices, and clinical settings.
+
+## ✨ Highlights
+
+- 🧠 **Swin Transformer:** Transfer learning with the pretrained `swin_tiny_patch4_window7_224` architecture.
+- 🏷️ **23 output classes:** Multi-class prediction across the dataset's skin-condition categories.
+- 🧪 **Training pipeline:** Separate train, validation, and test splits.
+- 🖼️ **Image preprocessing:** Resize images to 224 × 224 and apply ImageNet normalization.
+- 🔄 **Training augmentation:** Random horizontal flips, rotations, and brightness/contrast/saturation variation.
+- ⚙️ **Optimisation:** AdamW, cross-entropy loss, cosine learning-rate scheduling, and mixed-precision training.
+- 📊 **Evaluation:** Test accuracy, classification report, and confusion-matrix visualisation are included in the notebook.
+- 🚀 **Deployment direction:** The project description references Hugging Face Spaces for inference. See the deployment section for the repository artefacts currently available.
+
+## 🔬 Model and workflow
+
+```text
+DermNet image dataset
+          │
+          ▼
+  Train / validation / test
+          │
+          ▼
+  Resize to 224 × 224
+  Normalize with ImageNet statistics
+          │
+          ├── Training only:
+          │   flips, rotations, color jitter
+          │
+          ▼
+ Pretrained Swin-Tiny Transformer
+          │
+          ▼
+     23-class classifier
+          │
+          ▼
+ Validation & model selection
+          │
+          ▼
+ Test evaluation
+          │
+          ▼
+ Accuracy · Classification report · Confusion matrix
+```
+
+### Why Swin Transformer?
+
+Swin Transformer is a vision-transformer architecture that computes attention within local windows and shifts windows between layers. This hierarchical design helps it model visual patterns at multiple spatial scales while controlling attention cost compared with global attention over every image patch.
+
+In this project, `timm` creates the pretrained Swin-Tiny model and replaces its classification head with one sized for the dataset's **23 classes**.
+
+## 🗂️ Dataset
+
+The notebook expects the images to be arranged in class-specific directories, compatible with `torchvision.datasets.ImageFolder`:
+
+```text
+dataset/
+├── train/
+│   ├── class_1/
+│   ├── class_2/
+│   └── ...
+├── val/
+│   ├── class_1/
+│   ├── class_2/
+│   └── ...
+└── test/
+    ├── class_1/
+    ├── class_2/
+    └── ...
+```
+
+The notebook output shows the 23 DermNet category names and split counts for the original dataset arrangement:
+
+| Split | Images |
+|---|---:|
+| Train | 13,233 |
+| Validation | 4,012 |
+| Test | 4,017 |
+| **Total** | **21,262** |
+
+The notebook also contains experiments referencing an augmented dataset directory, with different split counts. Treat dataset totals as belonging to the specific experiment/split configuration rather than combining those counts.
+
+### Preprocessing
+
+- Resize images to **224 × 224**.
+- Convert images to tensors.
+- Normalize using ImageNet mean `[0.485, 0.456, 0.406]` and standard deviation `[0.229, 0.224, 0.225]`.
+- Apply random horizontal flipping, rotation up to 15 degrees, and colour jitter to training images.
+- Apply deterministic resizing and normalization to validation and test images.
+
+**Dataset access:** The data directory is expected locally and is not included in the repository listing. Obtain DermNet data through its appropriate source and ensure your use complies with its licence and terms.
+
+## 📈 Results and evaluation
+
+The original project summary reports approximately **83% accuracy** for an experiment on a DermNet subset. The notebook currently committed to this repository contains an evaluation output showing **67.39% test accuracy** for one run (test loss: 1.8979). The notebook also includes a classification report and confusion-matrix code.
+
+These values differ because a README-level summary and a notebook execution can represent different model/data configurations. For transparent reporting, the **67.39% result is the reproducible figure visible in the committed notebook output**; the 83% figure should be tied to the specific checkpoint and data split that produced it before being treated as the final test result.
+
+Evaluation includes:
+- Overall test accuracy and loss.
+- Per-class precision, recall, and F1-score.
+- A confusion matrix to inspect common class confusions.
+
+For medical image classification, aggregate accuracy alone is not sufficient. Per-class recall, precision, class imbalance, independent test data, and external validation matter—particularly where different classes may have different clinical consequences.
+
+## 🧰 Technology stack
+
+| Area | Tools |
+|---|---|
+| Language | Python |
+| Deep learning | PyTorch |
+| Vision models | `timm` / Swin Transformer |
+| Data loading | `torchvision.datasets.ImageFolder` |
+| Augmentation | `torchvision.transforms` |
+| Training | AdamW, Cross-Entropy, CosineAnnealingLR |
+| Efficiency | CUDA when available, automatic mixed precision |
+| Evaluation | scikit-learn classification report/confusion matrix, Matplotlib, Seaborn |
+| Notebook | Jupyter Notebook |
+
+## ▶️ Run the notebook
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Jayantsinghkhanna/23-Skin-diseases-detection-using-Swin-transformer-.git
+cd 23-Skin-diseases-detection-using-Swin-transformer-
+```
+
+### 2. Create an environment
+
+```bash
+python -m venv .venv
+```
+
+Activate it:
+
+**Windows PowerShell**
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+**macOS / Linux**
+```bash
+source .venv/bin/activate
+```
+
+### 3. Install the notebook dependencies
+
+```bash
+python -m pip install --upgrade pip
+pip install torch torchvision timm tqdm matplotlib pandas scikit-learn seaborn jupyter
+```
+
+Install a PyTorch build that matches your CUDA environment if using an NVIDIA GPU. The notebook automatically selects CUDA when available, otherwise it falls back to CPU.
+
+### 4. Prepare the dataset
+
+Create the `dataset/train`, `dataset/val`, and `dataset/test` folders and place images in subfolders named by class. Update `DATA_ROOT` in the notebook if your dataset path differs.
+
+### 5. Launch Jupyter
+
+```bash
+jupyter notebook 23_Skin_Diseases_detection.ipynb
+```
+
+Run the cells in order. Training can be computationally intensive; a CUDA-capable GPU is recommended.
+
+## 📁 Repository structure
+
+```text
+.
+├── 23_Skin_Diseases_detection.ipynb   # Training, validation, and evaluation workflow
+└── README.md                          # Project guide and methodology
+```
+
+The notebook expects the dataset locally. Model checkpoints and a standalone inference application are not present in the repository file listing at the time this README was updated.
+
+## 🚀 Deployment
+
+The project description mentions Hugging Face Spaces as the intended inference deployment. A deployable Space typically needs an inference entry point, dependency specification, label mapping, model weights, and preprocessing that exactly matches training.
+
+The current repository listing contains the notebook and README only, so this repository alone does not expose those deployment artefacts. Add a link to the live Space and document its inference interface here once the deployment is available and verified.
+
+## 🛣️ Potential improvements
+
+- Save and version the best checkpoint based on validation performance.
+- Resolve the discrepancy between the reported 83% accuracy and the notebook's visible 67.39% test result by documenting the exact run and split.
+- Add class-wise metrics and normalized confusion matrix images to the README.
+- Track experiments and model configurations for reproducibility.
+- Evaluate on an independent dataset and check for dataset leakage and distribution shift.
+- Add a validated inference script or Hugging Face Spaces app with a clear model card.
+- Consider explainability tools such as Grad-CAM or attention visualisations, while validating that visual explanations are meaningful.
+
 ---
+
+<div align="center">
+
+**SkinScan Doctor** · Exploring transformer-based computer vision for dermatological image classification.
+
+*Research and education only — not for clinical diagnosis or treatment decisions.*
+
+</div>
