@@ -114,9 +114,28 @@ The notebook also contains experiments referencing an augmented dataset director
 
 ## 📈 Results and evaluation
 
-The original project summary reports approximately **83% accuracy** for an experiment on a DermNet subset. The notebook currently committed to this repository contains an evaluation output showing **67.39% test accuracy** for one run (test loss: 1.8979). The notebook also includes a classification report and confusion-matrix code.
+### Validation performance — Swin-Tiny
 
-These values differ because a README-level summary and a notebook execution can represent different model/data configurations. For transparent reporting, the **67.39% result is the reproducible figure visible in the committed notebook output**; the 83% figure should be tied to the specific checkpoint and data split that produced it before being treated as the final test result.
+The training screenshot for the 25-epoch run shows validation accuracy holding at approximately **83%** in the final three epochs.
+
+| Epoch | Training accuracy | Training loss | Validation accuracy | Validation loss |
+|---|---:|---:|---:|---:|
+| 23 / 25 | 97.44% | 0.0621 | **83.10%** | 0.7996 |
+| 24 / 25 | 97.38% | 0.0646 | 83.00% | 0.8000 |
+| 25 / 25 | 97.47% | 0.0614 | 83.05% | 0.8008 |
+
+**Best validation accuracy shown: 83.10% at epoch 23.** This is a validation metric, not a test-set result. The final three epochs show a persistent gap between training accuracy (~97.4%) and validation accuracy (~83%), which suggests overfitting and supports selecting checkpoints based on validation performance rather than simply using the final epoch.
+
+### Test performance — a separately recorded notebook run
+
+The committed notebook also contains a test evaluation output reporting **67.39% test accuracy** with a test loss of **1.8979**, along with a per-class classification report and confusion-matrix code.
+
+| Metric | Recorded result | Context |
+|---|---:|---|
+| Best validation accuracy in the supplied training screenshot | **83.10%** | Epoch 23 of a 25-epoch run |
+| Test accuracy in the committed notebook output | **67.39%** | Separately recorded evaluation run |
+
+These values refer to different recorded results and should not be presented as if they were measured on the same run or checkpoint. The notebook contains experiments using different dataset directory configurations, so comparisons require matching the checkpoint, data split, preprocessing, and class mapping. Until the exact run/checkpoint relationship is verified, report the **83.10% as validation accuracy** and the **67.39% as the test result shown in the committed notebook output**.
 
 Evaluation includes:
 - Overall test accuracy and loss.
@@ -206,7 +225,7 @@ The current repository listing contains the notebook and README only, so this re
 ## 🛣️ Potential improvements
 
 - Save and version the best checkpoint based on validation performance.
-- Resolve the discrepancy between the reported 83% accuracy and the notebook's visible 67.39% test result by documenting the exact run and split.
+- Re-run test evaluation using the checkpoint selected by validation performance and document the matching dataset split/configuration.
 - Add class-wise metrics and normalized confusion matrix images to the README.
 - Track experiments and model configurations for reproducibility.
 - Evaluate on an independent dataset and check for dataset leakage and distribution shift.
